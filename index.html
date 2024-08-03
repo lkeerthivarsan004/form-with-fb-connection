@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!--FireBase SDK-->
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <title>Document</title>
+</head>
+<body>
+    <div class="2xl:container mx-auto">
+        <div class="w-[60%] mx-auto">
+            <div class="h-screen flex justify-center items-center ">
+                <form action="" id="form" >
+                    <div class=" flex flex-col justify-center items-center gap-y-4  bg-gradient-to-b from-[#faa0b6] via-[#d18cbb] to-[#a877bd]  px-7 py-7 rounded-lg">
+                        <div class="flex flex-col justify-center items-center">
+                            <label for="nPassword">New Password</label>
+                            <input type="text" id="nPassword" class="w-[300px] text-center border border-black" placeholder="enter your new Password">            
+                            <p id="nErr"></p>
+                        </div>
+                
+                        <div class="flex flex-col justify-center items-center">
+                            <label for="cPassword">Confirm Password</label>
+                            <input type="text" id="cPassword" class="w-[300px] text-center border border-black"  placeholder="enter your new Password again">            
+                            <p id="cErr"></p>
+                        </div>
+                
+                        <div class="flex flex-col justify-center items-center gap-y-4">
+                            <button class="border border-solid border-[#007cf7] px-4 py-2 rounded-lg bg-[#007cf7] text-white">UPDATE</button>  
+                            
+                            <p class="border border-solid border-[#007cf7] px-4 py-2 rounded-lg bg-[#007cf7] text-white hidden" id="msg"></p>
+                        </div>
+                    </div>
+                </form>
+            
+            </div>
+        
+        </div>
+    </div>
+    
+    <script>
+        const form=document.getElementById("form");
+        const nPass=document.getElementById("nPassword");
+        const cPass=document.getElementById("cPassword");
+        const nErr=document.getElementById("nErr");
+        const msg=document.getElementById("msg");
+
+        nPass.addEventListener("blur",(e)=>{
+            console.log(e.target.value)
+
+            if(e.target.value == ""){
+                nErr.textContent="*--required--*"
+                nErr.style.color="red"
+            } else {
+                nErr.textContent=""
+            }
+        })
+
+        cPass.addEventListener("blur",(e)=>{
+            console.log(e.target.value)
+
+            if(e.target.value == ""){
+                cErr.textContent="*--required--*"
+                cErr.style.color="red"
+            } else {
+                cErr.textContent=""
+            }
+        })
+
+
+        const valForm = (nPass,cPass)=>{
+
+            console.log("new password:",nPass);
+            console.log("confirm password:",cPass);
+
+            if(nPass==""){
+                console.log("new password is empty")
+            }  
+            if(cPass==""){
+                console.log("confirm password is empty")
+            } 
+            const passRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,15}$/;
+
+            if(nPass.match(passRegex)){
+                console.log("password matches with regex");
+                msg.textContent =" password changed successfully"
+            } else {
+                console.log("not  matches with regex");
+                msg.textContent =" password is empty"
+            }
+
+            
+        }
+
+        const saveForm = (nPass,cPass)=>{
+
+            
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyBpnz7MV6QSFoeBrFd_gDQ1Ptpmp1wIOGU",
+                authDomain: "form-basics-dcfc4.firebaseapp.com",
+                databaseURL: "https://form-basics-dcfc4-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "form-basics-dcfc4",
+                storageBucket: "form-basics-dcfc4.appspot.com",
+                messagingSenderId: "162560353079",
+                appId: "1:162560353079:web:e01c60873114f3a8e1f0b2"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            const db = firebase.database().ref("ReqForm");
+
+            var newRef = db.push();
+
+            newRef.set(
+                {
+                    NewPassword: nPass,
+                    ConfirmPassword: cPass,
+                }
+            );
+
+           
+
+           
+
+            form.reset();
+
+        }
+
+        form.addEventListener("submit",(e)=>{
+            e.preventDefault();
+
+            valForm(nPass.value,cPass.value);
+
+            saveForm(nPass.value,cPass.value);
+        })
+
+
+
+    </script>
+</body>
+</html>
